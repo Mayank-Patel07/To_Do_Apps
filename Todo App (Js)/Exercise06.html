@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Note Keeper</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="p-4 bg-light">
+    <div class="container">
+      <h2 class="mb-4">My Notes</h2>
+      <button class="btn btn-primary mb-4" id="bth">Add Note</button>
+      <div id="containers" class="d-flex flex-wrap gap-3"></div>
+    </div>
+
+    <script>
+      const containers = document.getElementById("containers");
+      const bth = document.getElementById("bth");
+
+      // Load notes on page load
+      window.onload = displayNotes;
+
+      // Add note button click
+      bth.addEventListener("click", () => {
+        const note_title = prompt("Enter your note title");
+        const note_text = prompt("Enter your note text");
+
+        if (!note_title || !note_text)
+          return alert("Both fields are required!");
+
+        const notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+        const newNote = {
+          id: Date.now(),
+          title: note_title,
+          text: note_text,
+        };
+
+        notes.push(newNote);
+        localStorage.setItem("notes", JSON.stringify(notes));
+        displayNotes();
+      });
+
+      // Display notes
+      function displayNotes() {
+        const notes = JSON.parse(localStorage.getItem("notes")) || [];
+        containers.innerHTML = "";
+
+        notes.forEach((note) => {
+          const card = document.createElement("div");
+          card.className = "card shadow-sm";
+          card.style.width = "18rem";
+          card.innerHTML = `
+          <img class="card-img-top" src="
+          data:image/jpeg;base64,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
+          " alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">${note.title}</h5>
+            <p class="card-text">${note.text}</p>
+            <button class="btn btn-danger remove-btn" data-id="${note.id}">Remove</button>
+          </div>
+        `;
+          containers.appendChild(card);
+        });
+
+        document.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = parseInt(e.target.getAttribute("data-id"));
+            const updatedNotes = notes.filter((note) => note.id !== id);
+            localStorage.setItem("notes", JSON.stringify(updatedNotes));
+            displayNotes();
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
